@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🍔 BurgerAI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>🍔 BurgerAI</h1>
+    <div id="chat-container">
+        <div id="chat-box"></div>
+        <input type="text" id="user-input" placeholder="Ask a recipe-related question...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function appendMessage(message, sender) {
+            var chatBox = document.getElementById('chat-box');
+            var newMessage = document.createElement('div');
+            newMessage.className = sender;
+            newMessage.innerText = message;
+            chatBox.appendChild(newMessage);
+        }
+
+        function sendMessage() {
+            var userInput = document.getElementById('user-input').value;
+            appendMessage(userInput, 'user');
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 'user_input': userInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                appendMessage(data.response, 'server');
+            });
+        }
+    </script>
+</body>
+</html>
